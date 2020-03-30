@@ -9,4 +9,4 @@ sudo mkdir /tmp/cross-grade
 
 cgrade_root=$(pwd)
 
-sudo chmod 777 clean.sh  env_vars.sh  feasibility.sh  init.sh	installed-size.py  testing.sh
+sudo chmod 777 clean.sh  env_vars.sh  feasibility.sh  init.sh	
