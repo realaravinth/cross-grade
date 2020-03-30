@@ -15,12 +15,13 @@ while read line
 do
     apt-cache show $line |
     grep "Installed-Size" |
-     cut -d ' ' -f 2 >> $cgrade_tmp_runtime-$start_time-sizes.txt
+     cut -d ' ' -f 2 >> $cgrade_tmp_runtime/$start_time-sizes.txt
 done < $cgrade_backup/pkg-list-$start_time.txt
 
 echo "[*] Checking for disk space availability"
-available_size=$(df / | grep overlay | cut -d ' ' -f 11)
-status=$(python3 $cgrade_root/space-check.py $cgrade_tmp_runtime-$start_time-sizes.txt $available_size)
+available_size=$(df --output=avail / | grep -o '[[:digit:]]*')
+status=$(python3 $cgrade_root/space-check.py $cgrade_tmp_runtime/$start_time-sizes.txt $available_size)
+
 
 if [ $status -eq 1 ]
 then    
@@ -29,4 +30,4 @@ exit
 fi
 
 echo "Sufficient disk space available, proceed with cross-grade"
-rm $cgrade_tmp_runtime-$start_time-sizes.txt
+rm $cgrade_tmp_runtime/$start_time-sizes.txt
