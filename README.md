@@ -7,7 +7,6 @@ Automating cross-grades on Debian installations
 There's no installing, just a few directories and a few permissions will have to granted. This process is automated by init.sh
 <br>
 `$ chmod 777 init.sh && ./init.sh` 
-`$ ./init.sh`
 <br>
 
 ## Feasibility check
