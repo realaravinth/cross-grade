@@ -95,8 +95,13 @@ rm $cgrade_tmp_runtime/$start_time-sizes.txt
 echo -e ':: Checking for missing packages'
 echo -e ':: Getting available packages list'
 echo 
+
+# I couldn't think for a more elegant way of handling the output of wget
 wget https://packages.debian.org/stable/${1}/allpackages?format=txt.gz \
--O $cgrade_tmp_runtime/tmp-$start_time-avail-pks-list.txt.gz
+-O $cgrade_tmp_runtime/tmp-$start_time-avail-pks-list.txt.gz&> download_pid=$!
+wait $download_pid
+rm download_pid=
+
 gunzip $cgrade_tmp_runtime/tmp-$start_time-avail-pks-list.txt.gz 
 cat $cgrade_tmp_runtime/tmp-$start_time-avail-pks-list.txt |
      cut -d ' ' -f 1 > $cgrade_tmp_runtime/avail-pkg-list-$start_time.txt
