@@ -1,5 +1,46 @@
 #!/bin/bash 
 
+
+# getting target architecture 
+arch="amd64 arm64 armel armf i386 mipsel mips64el ppc64el s390x
+alpha arm AVR32 hppa hurd-1386 ia64 kfreebsd-amd64kfreebsd-i386
+m32 m68k mips netbsd-1376 netbsd-alphaor1k powerpc powerpcspe
+riscv64 s390 sparc sparc64 sh4 x32"
+
+print_help(){
+    echo -e "\e[1m Usage: ./feasibility.sh  [target architecture] "
+    echo
+    echo -e "\e[1m Officially supported architechtures by Debian stable:"
+    echo -e "\t\e[0m amd64 arm64 armel armf i386 mipsel mips64el ppc64el s390x"
+    echo 
+    echo -e "\e[1m Unofficially supported architechtures by Debian stable: "
+    echo -e "\t\e[0m alpha arm AVR32 hppa hurd-1386 ia64 kfreebsd-amd64kfreebsd-i386"
+    echo -e "\t m32 m68k mips netbsd-1376 netbsd-alphaor1k powerpc powerpcspe"
+    echo -e "\t riscv64 s390 sparc sparc64 sh4 x32"
+    exit
+}
+
+arg_check=1
+if [ -z $1 ]
+then
+    print_help
+elif [ -n $1 ]
+then
+    for i in $arch
+    do
+        if [ $1 = $i ]
+        then
+            arg_check=0
+        fi    
+    done
+    if [ $arg_check -eq 1 ]  
+    then    
+        print_help
+    fi
+else
+    print_help
+fi
+
 #setting testing root location
 cgrade_root=$(pwd)
 source $cgrade_root/env_vars.sh
@@ -50,3 +91,53 @@ fi
 
 echo -e '\xE2\x9C\x94  Sufficient disk space available, proceed with cross-grade'
 rm $cgrade_tmp_runtime/$start_time-sizes.txt
+
+echo -e ':: Checking for missing packages'
+echo -e ':: Getting available packages list'
+echo 
+wget https://packages.debian.org/stable/${1}/allpackages?format=txt.gz \
+-O $cgrade_tmp_runtime/tmp-$start_time-avail-pks-list.txt.gz
+gunzip $cgrade_tmp_runtime/tmp-$start_time-avail-pks-list.txt.gz 
+cat $cgrade_tmp_runtime/tmp-$start_time-avail-pks-list.txt |
+     cut -d ' ' -f 1 > $cgrade_tmp_runtime/avail-pkg-list-$start_time.txt
+
+rm -r $cgrade_tmp_runtime/tmp-$start_time-avail-pks-list.txt 
+
+# preprocessing installed packages list
+
+while read line                 
+do
+echo $line |
+ cut -d ' ' -f 1 >> $cgrade_tmp_runtime/pkg-list-nospace-$start_time.txt
+done < $cgrade_backup/pkg-list-$start_time.txt
+
+while read line 
+do
+if [ $(echo $line | grep ":") ]
+then echo $line | cut -d ":" -f 1 >> ../temp-pkg.txt
+else
+    echo $line >> $cgrade_tmp_runtime/pkg-list--nospacecolon-$start_time.txt
+fi
+
+done < $cgrade_tmp_runtime/pkg-list-nospace-$start_time.txt
+
+rm $cgrade_tmp_runtime/pkg-list-nospace-$start_time.txt
+
+#comparing packages
+python3 $cgrade_root/compare.py \
+    $cgrade_tmp_runtime/pkg-list--nospacecolon-$start_time.txt \
+    $cgrade_tmp_runtime/avail-pkg-list-$start_time.txt \
+    $cgrade_backup/missing-pkg-list-$start_time.txt
+
+rm $cgrade_tmp_runtime/pkg-list--nospacecolon-$start_time.txt \
+    $cgrade_tmp_runtime/avail-pkg-list-$start_time.txt 
+
+if [ -s $cgrade_backup/missing-pkg-list-$start_time.txt ]
+then
+    echo "The following packages are missing in ${1}"
+    cat $cgrade_backup/missing-pkg-list-$start_time.txt
+    echo "Find missing packages list at ${cgrade_backup/missing-pkg-list-$start_time.txt}"
+else
+   echo -e '\xE2\x9C\x94  All packages are available in target architecture'
+   rm $cgrade_backup/missing-pkg-list-$start_time.txt
+fi
