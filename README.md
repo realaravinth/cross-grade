@@ -1,9 +1,12 @@
 # cross-grade
-Automating cross-grades on Debian installations 
+Automating cross-grades on Debian installations
+<br><br>
+**WARNING: The author tested these scripts several times on both VMs and his main machine before pushing it to Github.
+But use these scripts at your own risk. The author(s) can't be held liable if these scripts caused any kind of damage**
+<br><br>
+**NOTE: These scripts require root privileges to carry out tasks**
 
-**NOTE: commands beginning with `#` has to be run with sudo rights**
-
-## Supported architectures:
+## Supported architectures
 Please find the list of supported architectures at [Debian supported rchitectures page](https://wiki.debian.org/SupportedArchitectures). 
 
 ## Installation
@@ -20,7 +23,17 @@ To check feasibility, run:
 example for arm architecture:
 <br>
 `# ./feasibility.sh arm`
-## Clean up:
+
+## Finding broken packages
+After cross-grading, it is possible that a few packages can be rendered broken. To find them, run:
+<br>
+`# ./bin-check.sh`
+<br>
+If there are any broken packages, the script will output the filename containing the list of such packages. To view the list, run:
+<br>
+`# cat [filename]`
+<br>
+## Clean up
 The scripts in the project run with high verbosity and create a lot of files during run time. 
 These files are not automatically deleted because they might come in handy during troubleshooting. 
 <br>
