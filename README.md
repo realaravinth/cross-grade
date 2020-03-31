@@ -3,17 +3,23 @@ Automating cross-grades on Debian installations
 
 **NOTE: commands beginning with `#` has to be run with sudo rights**
 
+## Supported architectures:
+Please find the list of supported architectures at [Debian supported rchitectures page](https://wiki.debian.org/SupportedArchitectures). 
+
 ## Installation
 There's no installing, just a few directories and a few permissions will have to granted. This process is automated by init.sh
 <br>
-`$ chmod 777 init.sh && ./init.sh` 
+`# chmod 777 init.sh && ./init.sh` 
 <br>
 
 ## Feasibility check
 To check feasibility, run:
 <br>
-`# ./feasibility.sh`
-
+`# ./feasibility.sh [target architecture]`
+<br>
+example for arm architecture:
+<br>
+`# ./feasibility.sh arm`
 ## Clean up:
 The scripts in the project run with high verbosity and create a lot of files during run time. 
 These files are not automatically deleted because they might come in handy during troubleshooting. 
@@ -30,8 +36,4 @@ All files created by the cross-grade scripts will contain timestamps in their fi
 `/var/logs/corss-grade`
 + **Backup info:**
 `/var/backups/cross-grade`
-
-
-
-
-
+contains list installed packages before cross-grading and list of missing packages.
