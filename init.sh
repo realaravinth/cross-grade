@@ -9,4 +9,10 @@ sudo mkdir /tmp/cross-grade
 
 cgrade_root=$(pwd)
 
-sudo chmod 777 clean.sh  env_vars.sh  feasibility.sh  init.sh	bin-check.sh
+cd $root 
+for exe in *
+do 
+    chmod +x $exe
+done
+
+chmod +x ./databses/postgresql.sh 

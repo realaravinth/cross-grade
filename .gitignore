@@ -2,3 +2,4 @@ popcon/
 testing.sh
 .ipynb_checkpoints/
 tmp/
+.vscode/
