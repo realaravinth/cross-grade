@@ -10,6 +10,7 @@ But use these scripts at your own risk. The author(s) can't be held liable if th
 - [Dependencies:](#dependencies)
 - [Supported architectures](#supported-architectures)
 - [Installation](#installation)
+- [Databases](docs/databases/Index.md)
 - [Feasibility check](#feasibility-check)
   - [Availability of packages](#availability-of-packages)
 - [Finding broken packages](#finding-broken-packages)
